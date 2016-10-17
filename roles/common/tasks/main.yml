@@ -1,0 +1,5 @@
+---
+- name: Install nano
+  yum: name=nano state=present
+- name: Install net-tools
+  yum: name=net-tools state=present

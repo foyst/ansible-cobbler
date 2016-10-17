@@ -1,0 +1,34 @@
+---
+- name: Disable SELinux
+  selinux: state=disabled
+- name: Install cobbler yum repo
+  yum: name=epel-release state=present
+- name: Install cobbler
+  yum: name={{item}} state=installed
+  with_items:
+    - cobbler 
+    - cobbler-web 
+    - dnsmasq 
+    - syslinux 
+    - pykickstart
+    - xinetd
+- name: Start cobblerd service
+  service: name=cobblerd enabled=yes state=started
+- name: Start httpd service
+  service: name=httpd enabled=yes state=started
+- name: Override Cobbler Settings
+  template: src=settings.j2 dest=/etc/cobbler/settings
+- name: Override Cobbler Module Settings
+  template: src=modules.conf.j2 dest=/etc/cobbler/modules.conf
+- name: Override Cobbler DHCP Settings
+  template: src=dhcp.template.j2 dest=/etc/cobbler/dhcp.template
+- name: Override Cobbler DNS Settings
+  template: src=dnsmasq.template.j2 dest=/etc/cobbler/dnsmasq.template
+- name: Restart cobbler service
+  service: name=cobblerd state=restarted
+- name: Cobbler Check
+  command: cobbler check
+- name: Cobbler Sync
+  command: cobbler sync
+- name: Enable and Start systemctl
+  service: name=xinetd state=started
