@@ -1,0 +1,21 @@
+---
+# - name: Download CentOS7 Minimal ISO
+  # get_url:
+  #   url=http://centos.mirrors.nublue.co.uk/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso
+  #   dest=/tmp/CentOS-7-x86_64-Minimal-1511.iso
+- name: Mount CentOS7 ISO
+  mount:
+    name=/mnt/iso
+    src=/vagrant/CentOS-7-x86_64-DVD.iso
+    state=mounted
+    fstype=iso9660
+- name: Import CentOS7 into Cobbler
+  command: cobbler import --arch=x86_64 --path=/mnt/iso --name=CentOS-7
+- name: Unmount CentOS7 ISO
+  mount:
+    name=/mnt/iso
+    state=unmounted
+    src=/vagrant/CentOS-7-x86_64-DVD.iso
+    fstype=iso9660
+- name: Sync Cobbler with CentOS config
+  command: cobbler sync
