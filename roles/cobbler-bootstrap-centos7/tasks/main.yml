@@ -1,12 +1,15 @@
 ---
-# - name: Download CentOS7 Minimal ISO
-  # get_url:
-  #   url=http://centos.mirrors.nublue.co.uk/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso
-  #   dest=/tmp/CentOS-7-x86_64-Minimal-1511.iso
+- stat: path=/vagrant/CentOS-7-x86_64-Minimal-1511.iso
+  register: centosiso
+- name: Download CentOS7 Minimal ISO
+  get_url:
+    url=http://centos.mirrors.nublue.co.uk/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso
+    dest=/tmp/CentOS-7-x86_64-Minimal-1511.iso
+  when: not centosiso.stat.exists
 - name: Mount CentOS7 ISO
   mount:
     name=/mnt/iso
-    src=/vagrant/CentOS-7-x86_64-DVD.iso
+    src=/vagrant/CentOS-7-x86_64-Minimal-1511.iso
     state=mounted
     fstype=iso9660
 - name: Import CentOS7 into Cobbler
